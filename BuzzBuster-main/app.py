@@ -85,6 +85,42 @@ def get_bertweet_embeddings(tweet, tokenizer, model, max_length=128):
         return np.zeros(model.config.hidden_size)
 
 
+# Predict Logistic Regression
+def predict_logistic_regression(tweet):
+    processed_tweet = preprocess_tweet(tweet)
+    tweet_embeddings = get_bertweet_embeddings(processed_tweet, tokenizer, model, max_length=128)
+    tweet_embeddings = tweet_embeddings.reshape(1, -1)
+    prediction = log_reg.predict(tweet_embeddings)[0]
+    return prediction
+
+
+# Predict SVM
+def predict_svm(tweet):
+    processed_tweet = preprocess_tweet(tweet)
+    tweet_embeddings = get_bertweet_embeddings(processed_tweet, tokenizer, model, max_length=128)
+    tweet_embeddings = tweet_embeddings.reshape(1, -1)
+    prediction = svm_model.predict(tweet_embeddings)[0]
+    return prediction
+
+
+# Predict XGBoost
+def predict_xgboost(tweet):
+    processed_tweet = preprocess_tweet(tweet)
+    tweet_embeddings = get_bertweet_embeddings(processed_tweet, tokenizer, model, max_length=128)
+    tweet_embeddings = tweet_embeddings.reshape(1, -1)
+    prediction = xgboost.predict(tweet_embeddings)[0]
+    return prediction
+
+
+# Predict Neural Network
+def predict_neural_network(tweet):
+    processed_tweet = preprocess_tweet(tweet)
+    tweet_embeddings = get_bertweet_embeddings(processed_tweet, tokenizer, model, max_length=128)
+    tweet_embeddings = tweet_embeddings.reshape(1, tweet_embeddings.shape[1], 1)
+    prediction = neural_network.predict(tweet_embeddings)[0]
+    return prediction
+
+
 @app.route('/')
 def hello_world():
     tweet = "You're an amazing person, and I'm grateful to have you in my life."
