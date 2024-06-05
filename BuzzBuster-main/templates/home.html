@@ -6,6 +6,309 @@
     <link rel="stylesheet" href="/static/css/home.css">
 </head>
 <body>
+    <header>
+        <div class="logo">
+            <img src="/static/images/logo.png" alt="logo">
+        </div>
+    </header>
+    <div class="main_container">
+        <div class="left_container">
+            <div class="left_wrapper">
+                <h1>Welcome to BuzzBuster</h1>
+                <div class="description">
+                    <p>Enter a tweet to see if its intent is bullying</p>
+                </div>
+                <div class="New_tweet">
+                    <div class="avatar">
+                        <img src="/static/images/avatar.png" alt="avatar">
+                    </div>
+                    <div class="tweet">
+                        <form action='/predict' method="post">
+                            <textarea name="tweet" id="tweet" cols="100" rows="1" placeholder="Let's tweet !"></textarea>
+                            <div class="privacy">
+                                <img src="/static/images/globe.png" alt="public">
+                                <h4>Everyone can reply</h4>
+                            </div>
+                            <div class="options">
+                                <div class="wrapper">
+                                    <img src="/static/images/image3.png" alt="image">
+                                    <img src="/static/images/gif.png" alt="gif">
+                                    <img src="/static/images/emoji.png" alt="emojis">
+                                </div>
+                                <div class="wrapper">
+                                    <input type="submit" id="predictButton" value="Predict">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="right_container">
+            <div class="history">
+                <h2>Prediction history</h2>
+                <ul id="pastPredictionsList"></ul>
+                <button id="clearHistoryButton">Clear History</button>
+            </div>
+        </div>
+    </div>
+    <div class="metrics_container">
+        <h1>Metrics</h1>
+        <div class="metrics_wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Metrics\Models</th>
+                        <th>SVM</th>
+                        <th>Logistic Regression</th>
+                        <th>Neural Network</th>
+                        <th>Adaboost</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Accuracy</td>
+                        <td id="svm-accuracy">0.9563957317876433</td>
+                        <td id="lr-accuracy">0.9859043604268213</td>
+                        <td id="nn-accuracy">NN Accuracy</td>
+                        <td id="ada-accuracy">NN Accuracy</td>
+                    </tr>
+                    <tr>
+                        <td>F1 Score</td>
+                        <td id="svm-f1">0.9523946497914569</td>
+                        <td id="lr-f1">0.984755663199886</td>
+                        <td id="nn-f1">NN F1 Score</td>
+                        <td id="ada-f1">NN F1 Score</td>
+                    </tr>
+                    <tr>
+                        <td>Precision</td>
+                        <td id="svm-precision">0.9647435897435898</td>
+                        <td id="lr-precision">0.9879931389365352</td>
+                        <td id="nn-precision">NN Precision</td>
+                        <td id="ada-precision">NN Precision</td>
+                    </tr>
+                    <tr>
+                        <td>Recall</td>
+                        <td id="svm-recall">0.9403578528827038</td>
+                        <td id="lr-recall">0.981539335416075</td>
+                        <td id="nn-recall">NN Recall</td>
+                        <td id="ada-recall">NN Recall</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="metrics_image">
+            <div id="chart_div" style="width: 900px; height: 500px;"></div>
+        </div>
+    </div>
+    <div class="eda_container">
+        <h1>Exploratory Data Analysis</h1>
+        <p>&nbsp;&nbsp;In our exploratory data analysis (EDA), we explored the dataset to understand the distribution and characteristics of tweets related to harassment. We used histograms to examine 'retweetCount' and 'likeCount', revealing engagement levels. A count plot visualized tweet frequencies by labels ('bullying detected' or 'no bullying'). Scatter plots and box plots identified relationships and outliers between engagement metrics and labels. Word clouds and bar plots highlighted common words, providing insights into language patterns. This EDA revealed the dataset's complexity, setting the stage for further analysis and model development.</p>
+        <div class="eda">
+            <div class="eda_left">
+                <div class="eda_wrapper">
+                    <h4>Features distribution</h4>
+                    <p>&nbsp;&nbsp;We first started by calculating the frequency of each label in the dataset, as you can see in the chart, the chart illustrates the frequency of bullying detection versus instances classified as not bullying. The blue line represents the frequency of detected bullying, while the orange line indicates the frequency of cases labeled as not bullying. The data suggests that the system may have a higher likelihood of detecting bullying compared to classifying an incident as not bullying. The blue lines for ‘bullying detected’ almost reaches the 10000 counts while the orange line ‘no bullying’ surpasses the 10000 counts level to almost reach the 11000 counts level.</p>
+                </div>
+            </div>
+            <div class="eda_right">
+                <div class="eda_images">
+                    <img src="/static/images/frequency.png" alt="frequency">
+                </div>
+            </div>
+        </div>
+        <div class="eda">
+            <div class="eda_left">
+                <div class="eda_wrapper">
+                    <h4>Features distribution</h4>
+                    <p>We compared retweet and like counts using histograms and box plots.<br><br>
+                        &nbsp;&nbsp;For retweet counts, the histogram shows a left-skewed distribution where most tweets receive few retweets, while a small number garner many, which is typical in social media data. The box plot compares retweet counts between tweets labeled "bullying detected" and "no bullying." It reveals that tweets marked as bullying have a higher median retweet count, indicating they are more likely to be retweeted.<br><br>
 
+                        &nbsp;&nbsp;Similarly, for like counts, the histogram also shows a left-skewed distribution with most tweets getting few likes and a few accumulating many. The box plot comparing like counts between the same labels shows that tweets marked as bullying have a higher median like count, suggesting they receive more likes.<br><br>
+
+                        &nbsp;&nbsp;To further analyze the relationship between retweet and like counts, we used a scatter plot. It reveals a positive correlation, indicating that tweets with higher retweets tend to get more likes. However, there are exceptions where tweets with many retweets have fewer likes and vice versa. Overall, the scatter plot illustrates that higher retweet activity generally associates with increased likes, though with considerable variability.</p>
+                </div>
+            </div>
+            <div class="eda_right">
+                <div class="eda_images">
+                    <img src="/static/images/retweetcount.png" alt="retweetcount">
+                    <img src="/static/images/likecount.png" alt="likecount">
+                    <img src="/static/images/scatterplot.png" alt="scatterplot">
+                </div>
+            </div>
+        </div>
+        <div class="eda">
+            <div class="eda_left">
+                <div class="eda_wrapper">
+                    <h4>Word Count</h4>
+                    <p>&nbsp;&nbsp;We analyzed word counts in comments to detect bullying using box plots and KDE plots. For "bullying detected," comments are generally shorter with low word counts, as shown by a KDE plot peak at very low counts. In contrast, "no bullying" comments have more variability and extreme outliers, with some exceeding 400 words. In conclusion, bullying comments are shorter, while non-bullying comments vary more in length.</p>
+                </div>
+            </div>
+            <div class="eda_right">
+                <div class="eda_images">
+                    <img src="/static/images/word_count.png" alt="word_count">
+                </div>
+            </div>
+        </div>
+        <div class="eda">
+            <div class="eda_left">
+                <div class="eda_wrapper">
+                    <h4>Mean Word Count</h4>
+                    <p>&nbsp;&nbsp;We examined mean word lengths in comments using box plots and KDE plots. Both categories have a median around 5 characters, indicating short words. However, "no bullying" comments show more extreme outliers and slightly more variability. Overall, mean word lengths are similar, but non-bullying comments exhibit more variability.</p>
+                </div>
+            </div>
+            <div class="eda_right">
+                <div class="eda_images">
+                    <img src="/static/images/mean_word_count.png" alt="word_count">
+                </div>
+            </div>
+        </div>
+        <div class="eda">
+            <div class="eda_left">
+                <div class="eda_wrapper">
+                    <h4>Mean Sentence Length</h4>
+                    <p>&nbsp;&nbsp;We explored mean sentence lengths using box plots and KDE plots. For "bullying detected," sentences are shorter with less variability. In contrast, "no bullying" sentences show more variability and longer lengths, with some exceeding 3500 characters. In summary, bullying comments have shorter sentences, while non-bullying comments vary more in length.</p>
+                </div>
+            </div>
+            <div class="eda_right">
+                <div class="eda_images">
+                    <img src="/static/images/mean_sentence_length.png" alt="word_count">
+                </div>
+            </div>
+        </div>
+        <div class="eda">
+            <div class="eda_left">
+                <div class="eda_wrapper">
+                    <h4>Bar charts & WordClouds for Bigrams</h4>
+                    <p>&nbsp;&nbsp;We analyzed bullying detection through bigram word clouds and bar charts.<br><br>
+                        &nbsp;&nbsp;The "bullying detected" word cloud reveals pairs like "idiot_male" and "newly_adopt," indicating derogatory terms and adoption contexts. Names like "brij_bhushan" and emotional phrases like "lunatic_everything" are prominent. The bar chart highlights bigrams such as "child abuse" and "sexual harassment," pointing to severe behaviors and specific individuals like "ted cruz."<br><br>
+                        &nbsp;&nbsp;In "no bullying," word pairs like "kat_andre" and "nigeria_military" suggest varied topics. The bar chart shows bigrams like "instant restaurant" and "look like," indicating broader themes.<br><br>
+                        &nbsp;&nbsp;These visualizations highlight language patterns in bullying and non-bullying texts, emphasizing emotional impacts, power dynamics, and justice.</p>
+                </div>
+            </div>
+            <div class="eda_right">
+                <div class="eda_images">
+                    <img src="/static/images/bigram_wordcloud.png" alt="bigram_wordcloud">
+                    <img src="/static/images/bigram_wordcloud1.png" alt="bigram_wordcloud1">
+                    <img src="/static/images/Occuring_words_bi.png" alt="bigram_bar_chart">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="lda_container">
+        <h1>Latent Dirichlet Allocation (LDA)</h1>
+        <p>&nbsp;&nbsp;Latent Dirichlet Allocation (LDA) is a generative probabilistic model that allows sets of observations to be explained by unobserved groups that explain why some parts of the data are similar. In our analysis, we applied LDA to identify topics in the dataset. We used the Gensim library to build the LDA model and visualize the topics. The model identified topics based on word frequencies, revealing underlying themes in the data. This analysis provided insights into the content and structure of the dataset, enabling us to understand the key topics and trends present in the tweets.</p>
+        <div class="lda_images">
+            <img src="/static/images/lda1.png" alt="topic1">
+            <img src="/static/images/lda2.png" alt="topic2">
+            <img src="/static/images/lda3.png" alt="topic3">
+            <img src="/static/images/lda4.png" alt="topic4">
+        </div>
+    </div>
+    <footer>
+        &copy; 2024 by BuzzBuster. All rights reserved.
+    </footer>
 </body>
 </html>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const textarea = document.getElementById('tweet');
+
+    // Function to auto-resize the textarea
+    const autoResize = () => {
+        textarea.style.height = 'auto'; // Reset the height
+        textarea.style.height = textarea.scrollHeight + 'px'; // Set it to the scrollHeight
+    };
+
+    textarea.addEventListener('input', autoResize);
+
+    // Initial resize to fit the content on load
+    autoResize();
+});
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+    const tweet = document.getElementById('tweet');
+    const predictButton = document.getElementById('predictButton');
+    const pastPredictionsList = document.getElementById('pastPredictionsList');
+    const clearHistoryButton = document.getElementById('clearHistoryButton');
+
+    // Load past predictions from local storage and display them
+    const loadPastPredictions = () => {
+        const pastPredictions = JSON.parse(localStorage.getItem('pastPredictions')) || [];
+        pastPredictionsList.innerHTML = '';
+        pastPredictions.forEach(prediction => {
+            const li = document.createElement('li');
+            li.textContent = prediction;
+            pastPredictionsList.appendChild(li);
+        });
+    };
+
+    // Save a new prediction to local storage
+    const savePrediction = (prediction) => {
+        const pastPredictions = JSON.parse(localStorage.getItem('pastPredictions')) || [];
+        pastPredictions.push(prediction);
+        localStorage.setItem('pastPredictions', JSON.stringify(pastPredictions));
+        loadPastPredictions();
+    };
+
+    // Add event listener to predict button
+    predictButton.addEventListener('click', () => {
+        const prediction = tweet.value.trim();
+        if (prediction) {
+            savePrediction(prediction);
+            tweet.value = ''; // Clear the input after saving
+        }
+    });
+
+    // Clear the search history
+    const clearHistory = () => {
+        localStorage.removeItem('pastPredictions');
+        loadPastPredictions();
+    };
+
+    // Add event listener to clear history button
+    clearHistoryButton.addEventListener('click', clearHistory);
+
+    // Initial load of past searches
+    loadPastPredictions();
+});
+</script>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+    // Load the Visualization API and the corechart package.
+    google.charts.load('current', {'packages':['corechart']});
+
+    // Set a callback to run when the Google Visualization API is loaded.
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+            ['Model', 'Precision', 'Recall', 'F1 Score', 'Accuracy'],
+            ['NN', 89.53, 98.95, 94.01, 93.96],
+            ['LR', 90.24, 97.80, 93.87, 93.89],
+            ['SVM', 92.25, 97.80, 94.94, 95.02],
+            ['XGBoost', 94.69, 97.02, 95.84, 95.97]
+        ]);
+
+        var options = {
+            chartArea: {width: '50%'},
+            hAxis: {
+                title: 'Model',
+                titleTextStyle: {color: '#FFF'},
+                textStyle: {color: '#FFF'}
+            },
+            vAxis: {
+                title: 'Percentage',
+                titleTextStyle: {color: '#FFF'},
+                textStyle: {color: '#FFF'}
+            },
+            legend: {textStyle: {color: '#FFF'}},
+            colors: ['#FFF', '#84C6F5', '#0D70BC', '#0C2945'],
+            backgroundColor: '#181818',
+        };
+
+        var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
+    }
+</script>
