@@ -170,7 +170,7 @@ header img {
     align-items: center;
     justify-content: space-between;
 }
-.options button {
+#predictButton {
     background-color: #1A8CD8;
     color: white;
     border: none;
