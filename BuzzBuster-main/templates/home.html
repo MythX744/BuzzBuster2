@@ -23,32 +23,64 @@
                         <img src="/static/images/avatar.png" alt="avatar">
                     </div>
                     <div class="tweet">
-                        <form action='/predict' method="post">
-                            <textarea name="tweet" id="tweet" cols="100" rows="1" placeholder="Let's tweet !"></textarea>
-                            <div class="privacy">
-                                <img src="/static/images/globe.png" alt="public">
-                                <h4>Everyone can reply</h4>
+                        <textarea name="tweet_text" id="tweet" cols="100" rows="1" placeholder="Let's tweet !"></textarea>
+                        <div class="privacy">
+                            <img src="/static/images/globe.png" alt="public">
+                            <h4>Everyone can reply</h4>
+                        </div>
+                        <div class="options">
+                            <div class="wrapper">
+                                <img src="/static/images/image3.png" alt="image">
+                                <img src="/static/images/gif.png" alt="gif">
+                                <img src="/static/images/emoji.png" alt="emojis">
                             </div>
-                            <div class="options">
-                                <div class="wrapper">
-                                    <img src="/static/images/image3.png" alt="image">
-                                    <img src="/static/images/gif.png" alt="gif">
-                                    <img src="/static/images/emoji.png" alt="emojis">
-                                </div>
-                                <div class="wrapper">
-                                    <input type="submit" id="predictButton" value="Predict">
-                                </div>
+                            <div class="wrapper">
+                                <button id="predictButton">Predict</button>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
+                {% if tweet %}
+                    <div class="prediction">
+                        <div class="tweet_preview">
+                            <div class="user_avatar">
+                                <img src="/static/images/avatar.png" alt="avatar">
+                            </div>
+                            <div class="user_tweet">
+                                <div class="user">
+                                    <h4>You</h4>
+                                    <h6>@your_username</h6>
+                                </div>
+                                <p>{{ tweet }}</p>
+                                <div class="user_options">
+                                    <img src="/static/images/responses.png" alt="response">
+                                    <img src="/static/images/retweet.png" alt="retweet">
+                                    <img src="/static/images/like.png" alt="like">
+                                    <div class="wrapper">
+                                        <img src="/static/images/bookmark.png" alt="share">
+                                        <img src="/static/images/share.png" alt="share">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="result">
+                            <h2>The results for this tweet are :</h2>
+                            <p><strong>Logistic Regression Prediction:</strong> {{ prediction_lr }}</p>
+                            <p><strong>SVM Prediction:</strong> {{ prediction_svm }}</p>
+                            <p><strong>XGBoost Prediction:</strong> {{ prediction_xgboost }}</p>
+                            <p><strong>Neural Network Prediction:</strong> {{ prediction_nn }}</p>
+                        </div>
+                    </div>
+                {% endif %}
             </div>
         </div>
         <div class="right_container">
             <div class="history">
                 <h2>Prediction history</h2>
                 <ul id="pastPredictionsList"></ul>
-                <button id="clearHistoryButton">Clear History</button>
+                <div class="history_footer">
+                    <button id="clearHistoryButton">Clear History</button>
+                </div>
             </div>
         </div>
     </div>
@@ -62,37 +94,37 @@
                         <th>SVM</th>
                         <th>Logistic Regression</th>
                         <th>Neural Network</th>
-                        <th>Adaboost</th>
+                        <th>XGBoost</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td>Accuracy</td>
-                        <td id="svm-accuracy">0.9563957317876433</td>
-                        <td id="lr-accuracy">0.9859043604268213</td>
-                        <td id="nn-accuracy">NN Accuracy</td>
-                        <td id="ada-accuracy">NN Accuracy</td>
+                        <td id="svm-accuracy">{{ accuracy_svm }}</td>
+                        <td id="lr-accuracy">{{ accuracy_log }}</td>
+                        <td id="nn-accuracy">{{ accuracy_nn }}</td>
+                        <td id="xgb-accuracy">{{ accuracy_xgboost }}</td>
                     </tr>
                     <tr>
                         <td>F1 Score</td>
-                        <td id="svm-f1">0.9523946497914569</td>
-                        <td id="lr-f1">0.984755663199886</td>
-                        <td id="nn-f1">NN F1 Score</td>
-                        <td id="ada-f1">NN F1 Score</td>
+                        <td id="svm-f1">{{ f1_svm }}</td>
+                        <td id="lr-f1">{{ f1_log }}</td>
+                        <td id="nn-f1">{{ f1_nn }}</td>
+                        <td id="xgb-f1">{{ f1_xgboost }}</td>
                     </tr>
                     <tr>
                         <td>Precision</td>
-                        <td id="svm-precision">0.9647435897435898</td>
-                        <td id="lr-precision">0.9879931389365352</td>
-                        <td id="nn-precision">NN Precision</td>
-                        <td id="ada-precision">NN Precision</td>
+                        <td id="svm-precision">{{ precision_svm }}</td>
+                        <td id="lr-precision">{{ precision_log }}</td>
+                        <td id="nn-precision">{{ precision_nn }}</td>
+                        <td id="xgb-precision">{{ precision_xgboost }}</td>
                     </tr>
                     <tr>
                         <td>Recall</td>
-                        <td id="svm-recall">0.9403578528827038</td>
-                        <td id="lr-recall">0.981539335416075</td>
-                        <td id="nn-recall">NN Recall</td>
-                        <td id="ada-recall">NN Recall</td>
+                        <td id="svm-recall">{{ recall_svm }}</td>
+                        <td id="lr-recall">{{ recall_log }}</td>
+                        <td id="nn-recall">{{ recall_nn }}</td>
+                        <td id="xgb-recall">{{ recall_xgboost }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -312,3 +344,5 @@
         chart.draw(data, options);
     }
 </script>
+<script></script>
+
