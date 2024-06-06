@@ -71,7 +71,7 @@
                             <p><strong>SVM Prediction:</strong> {{ prediction_svm }}</p>
                             <p><strong>XGBoost Prediction:</strong> {{ prediction_xgboost }}</p>
                             <p><strong>Neural Network Prediction:</strong> {{ prediction_nn }}</p>
-                            <p><strong>Bert Prediction:</strong> bullying detected</p>
+                            <p><strong>Bert Prediction:</strong> {{ prediction_lr }}</p>
                         </div>
                     </div>
                 {% endif %}
@@ -108,7 +108,7 @@
                         <td id="lr-accuracy">{{ accuracy_log }}</td>
                         <td id="nn-accuracy">{{ accuracy_nn }}</td>
                         <td id="xgb-accuracy">{{ accuracy_xgboost }}</td>
-                        <td id="bert-accuracy">96.89%</td>
+                        <td id="bert-accuracy">96.89 %</td>
                     </tr>
                     <tr>
                         <td>F1 Score</td>
@@ -124,7 +124,7 @@
                         <td id="lr-precision">{{ precision_log }}</td>
                         <td id="nn-precision">{{ precision_nn }}</td>
                         <td id="xgb-precision">{{ precision_xgboost }}</td>
-                        <td id="bert-precision">94.83%</td>
+                        <td id="bert-precision">94.83 %</td>
                     </tr>
                     <tr>
                         <td>Recall</td>
@@ -132,7 +132,7 @@
                         <td id="lr-recall">{{ recall_log }}</td>
                         <td id="nn-recall">{{ recall_nn }}</td>
                         <td id="xgb-recall">{{ recall_xgboost }}</td>
-                        <td id="bert-recall">98.96%</td>
+                        <td id="bert-recall">98.96 %</td>
                     </tr>
                 </tbody>
             </table>
