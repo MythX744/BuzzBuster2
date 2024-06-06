@@ -130,7 +130,7 @@ def home():
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    tweet = request.form['tweet_text']
+    tweet = request.form['tweet']
     print(f'Tweet: {tweet}')
 
     # Preprocess the tweet and get its BERTweet embeddings
@@ -149,13 +149,26 @@ def predict():
     new_tweet_embeddings_nn = new_tweet_embeddings.reshape(1, new_tweet_embeddings.shape[1], 1)
     prediction_nn = neural_network.predict(new_tweet_embeddings_nn)[0]
 
+    # Metrics
+    accuracy_log, f1_log, recall_log, precision_log = logistic_regression_metrics()
+    accuracy_svm, f1_svm, recall_svm, precision_svm = metrics_svm()
+    accuracy_xgboost, f1_xgboost, recall_xgboost, precision_xgboost = metrics_xgboost()
+    accuracy_nn, f1_nn, recall_nn, precision_nn = metrics_neural_network()
+
     # Render the template with the predictions as variables
-    return render_template('test.html',
+    return render_template('home.html',
                            tweet=tweet,
                            prediction_lr=("Bullying detected" if prediction_lr == 1 else "No bullying"),
                            prediction_svm=("Bullying detected" if prediction_svm == 1 else "No bullying"),
                            prediction_xgboost=("Bullying detected" if prediction_xgboost == 1 else "No bullying"),
-                           prediction_nn=("Bullying detected" if prediction_nn > 0.5 else "No bullying"))
+                           prediction_nn=("Bullying detected" if prediction_nn > 0.5 else "No bullying"),
+                           accuracy_log=accuracy_log, f1_log=f1_log, recall_log=recall_log, precision_log=precision_log,
+                           accuracy_svm=accuracy_svm, f1_svm=f1_svm, recall_svm=recall_svm, precision_svm=precision_svm,
+                           accuracy_xgboost=accuracy_xgboost, f1_xgboost=f1_xgboost, recall_xgboost=recall_xgboost,
+                           precision_xgboost=precision_xgboost, accuracy_nn=accuracy_nn, f1_nn=f1_nn,
+                           recall_nn=recall_nn,
+                           precision_nn=precision_nn
+                           )
 
 
 if __name__ == '__main__':
