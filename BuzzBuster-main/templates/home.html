@@ -71,6 +71,7 @@
                             <p><strong>SVM Prediction:</strong> {{ prediction_svm }}</p>
                             <p><strong>XGBoost Prediction:</strong> {{ prediction_xgboost }}</p>
                             <p><strong>Neural Network Prediction:</strong> {{ prediction_nn }}</p>
+                            <p><strong>Bert Prediction:</strong> bullying detected</p>
                         </div>
                     </div>
                 {% endif %}
@@ -97,6 +98,7 @@
                         <th>Logistic Regression</th>
                         <th>Neural Network</th>
                         <th>XGBoost</th>
+                        <th>BERT</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -106,6 +108,7 @@
                         <td id="lr-accuracy">{{ accuracy_log }}</td>
                         <td id="nn-accuracy">{{ accuracy_nn }}</td>
                         <td id="xgb-accuracy">{{ accuracy_xgboost }}</td>
+                        <td id="bert-accuracy">96.89%</td>
                     </tr>
                     <tr>
                         <td>F1 Score</td>
@@ -113,6 +116,7 @@
                         <td id="lr-f1">{{ f1_log }}</td>
                         <td id="nn-f1">{{ f1_nn }}</td>
                         <td id="xgb-f1">{{ f1_xgboost }}</td>
+                        <td id="bert-f1">96.85%</td>
                     </tr>
                     <tr>
                         <td>Precision</td>
@@ -120,6 +124,7 @@
                         <td id="lr-precision">{{ precision_log }}</td>
                         <td id="nn-precision">{{ precision_nn }}</td>
                         <td id="xgb-precision">{{ precision_xgboost }}</td>
+                        <td id="bert-precision">94.83%</td>
                     </tr>
                     <tr>
                         <td>Recall</td>
@@ -127,6 +132,7 @@
                         <td id="lr-recall">{{ recall_log }}</td>
                         <td id="nn-recall">{{ recall_nn }}</td>
                         <td id="xgb-recall">{{ recall_xgboost }}</td>
+                        <td id="bert-recall">98.96%</td>
                     </tr>
                 </tbody>
             </table>
@@ -154,7 +160,7 @@
         <div class="eda">
             <div class="eda_left">
                 <div class="eda_wrapper">
-                    <h4>Features distribution</h4>
+                    <h4>Engagement distribution</h4>
                     <p>We compared retweet and like counts using histograms and box plots.<br><br>
                         &nbsp;&nbsp;For retweet counts, the histogram shows a left-skewed distribution where most tweets receive few retweets, while a small number garner many, which is typical in social media data. The box plot compares retweet counts between tweets labeled "bullying detected" and "no bullying." It reveals that tweets marked as bullying have a higher median retweet count, indicating they are more likely to be retweeted.<br><br>
 
@@ -321,7 +327,8 @@
             ['NN', 89.53, 98.95, 94.01, 93.96],
             ['LR', 90.24, 97.80, 93.87, 93.89],
             ['SVM', 92.25, 97.80, 94.94, 95.02],
-            ['XGBoost', 94.69, 97.02, 95.84, 95.97]
+            ['XGBoost', 94.69, 97.02, 95.84, 95.97],
+            ['BERT', 94.83, 98.96, 96.85, 96.89]
         ]);
 
         var options = {
