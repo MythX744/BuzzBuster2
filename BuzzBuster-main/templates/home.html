@@ -24,7 +24,7 @@
                     </div>
                     <div class="tweet">
                         <form action='/predict' method="post">
-                            <textarea name="tweet" id="id-input" cols="100" rows="1" placeholder="Let's tweet !"></textarea>
+                            <textarea name="tweet" id="text_tweet" cols="100" rows="1" placeholder="Let's tweet !"></textarea>
                             <div class="privacy">
                                 <img src="/static/images/globe.png" alt="public">
                                 <h4>Everyone can reply</h4>
@@ -246,7 +246,7 @@
 </html>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-    const textarea = document.getElementById('tweet');
+    const textarea = document.getElementById('text_tweet');
 
     // Function to auto-resize the textarea
     const autoResize = () => {
@@ -262,7 +262,7 @@
 </script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-    const tweet = document.getElementById('tweet');
+    const tweet = document.getElementById('text_tweet');
     const predictButton = document.getElementById('predictButton');
     const pastPredictionsList = document.getElementById('pastPredictionsList');
     const clearHistoryButton = document.getElementById('clearHistoryButton');
@@ -291,7 +291,6 @@
         const prediction = tweet.value.trim();
         if (prediction) {
             savePrediction(prediction);
-            tweet.value = ''; // Clear the input after saving
         }
     });
 
