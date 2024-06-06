@@ -23,21 +23,23 @@
                         <img src="/static/images/avatar.png" alt="avatar">
                     </div>
                     <div class="tweet">
-                        <textarea name="tweet_text" id="tweet" cols="100" rows="1" placeholder="Let's tweet !"></textarea>
-                        <div class="privacy">
-                            <img src="/static/images/globe.png" alt="public">
-                            <h4>Everyone can reply</h4>
-                        </div>
-                        <div class="options">
-                            <div class="wrapper">
-                                <img src="/static/images/image3.png" alt="image">
-                                <img src="/static/images/gif.png" alt="gif">
-                                <img src="/static/images/emoji.png" alt="emojis">
+                        <form action='/predict' method="post">
+                            <textarea name="tweet_text" id="tweet" cols="100" rows="1" placeholder="Let's tweet !"></textarea>
+                            <div class="privacy">
+                                <img src="/static/images/globe.png" alt="public">
+                                <h4>Everyone can reply</h4>
                             </div>
-                            <div class="wrapper">
-                                <button id="predictButton">Predict</button>
+                            <div class="options">
+                                <div class="wrapper">
+                                    <img src="/static/images/image3.png" alt="image">
+                                    <img src="/static/images/gif.png" alt="gif">
+                                    <img src="/static/images/emoji.png" alt="emojis">
+                                </div>
+                                <div class="wrapper">
+                                    <input type="submit" id="predictButton" value="Predict">
+                                </div>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
                 {% if tweet %}
