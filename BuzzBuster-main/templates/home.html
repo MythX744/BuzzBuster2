@@ -67,11 +67,11 @@
                         </div>
                         <div class="result">
                             <h2>The results for this tweet are :</h2>
-                            <p><strong>Logistic Regression Prediction:</strong> {{ prediction_lr }}</p>
-                            <p><strong>SVM Prediction:</strong> {{ prediction_svm }}</p>
-                            <p><strong>XGBoost Prediction:</strong> {{ prediction_xgboost }}</p>
-                            <p><strong>Neural Network Prediction:</strong> {{ prediction_nn }}</p>
-                            <p><strong>Bert Prediction:</strong> {{ prediction_lr }}</p>
+                            <p><strong>Logistic Regression Prediction :</strong> {{ prediction_lr }}</p>
+                            <p><strong>SVM Prediction :</strong> {{ prediction_svm }}</p>
+                            <p><strong>XGBoost Prediction :</strong> {{ prediction_xgboost }}</p>
+                            <p><strong>Neural Network Prediction :</strong> {{ prediction_nn }}</p>
+                            <p><strong>Bert Prediction :</strong> {{ prediction_bert }}</p>
                         </div>
                     </div>
                 {% endif %}
@@ -108,7 +108,7 @@
                         <td id="lr-accuracy">{{ accuracy_log }}</td>
                         <td id="nn-accuracy">{{ accuracy_nn }}</td>
                         <td id="xgb-accuracy">{{ accuracy_xgboost }}</td>
-                        <td id="bert-accuracy">96.89 %</td>
+                        <td id="bert-accuracy">{{ accuracy_bert }}</td>
                     </tr>
                     <tr>
                         <td>F1 Score</td>
@@ -116,7 +116,7 @@
                         <td id="lr-f1">{{ f1_log }}</td>
                         <td id="nn-f1">{{ f1_nn }}</td>
                         <td id="xgb-f1">{{ f1_xgboost }}</td>
-                        <td id="bert-f1">96.85%</td>
+                        <td id="bert-f1">{{ f1_bert }}</td>
                     </tr>
                     <tr>
                         <td>Precision</td>
@@ -124,7 +124,7 @@
                         <td id="lr-precision">{{ precision_log }}</td>
                         <td id="nn-precision">{{ precision_nn }}</td>
                         <td id="xgb-precision">{{ precision_xgboost }}</td>
-                        <td id="bert-precision">94.83 %</td>
+                        <td id="bert-precision">{{ precision_bert }}</td>
                     </tr>
                     <tr>
                         <td>Recall</td>
@@ -132,7 +132,7 @@
                         <td id="lr-recall">{{ recall_log }}</td>
                         <td id="nn-recall">{{ recall_nn }}</td>
                         <td id="xgb-recall">{{ recall_xgboost }}</td>
-                        <td id="bert-recall">98.96 %</td>
+                        <td id="bert-recall">{{ recall_bert }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -328,7 +328,7 @@
             ['LR', 90.24, 97.80, 93.87, 93.89],
             ['SVM', 92.25, 97.80, 94.94, 95.02],
             ['XGBoost', 94.69, 97.02, 95.84, 95.97],
-            ['BERT', 94.83, 98.96, 96.85, 96.89]
+            ['BERT', 94.62, 98.65, 96.59, 96.64]
         ]);
 
         var options = {
