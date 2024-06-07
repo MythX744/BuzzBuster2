@@ -1,9 +1,9 @@
 import torch
-import joblib
 from torch import nn
 import numpy as np
 from transformers import AdamW, get_linear_schedule_with_warmup
-from sklearn.metrics import accuracy_score, classification_report
+from sklearn.metrics import accuracy_score, classification_report, precision_recall_fscore_support
+import joblib
 from torch.utils.data import DataLoader, TensorDataset
 from sklearn.model_selection import train_test_split
 from transformers import BertTokenizer, BertModel
@@ -43,9 +43,11 @@ X_val_list = X_val.astype(str).tolist()
 train_input_ids, train_attention_masks, train_labels = tokenize_text(X_train, y_train, tokenizer)
 val_input_ids, val_attention_masks, val_labels = tokenize_text(X_val_list, y_val, tokenizer)
 
+
 # Create TensorDatasets
 train_dataset = TensorDataset(train_input_ids, train_attention_masks, train_labels)
 val_dataset = TensorDataset(val_input_ids, val_attention_masks, val_labels)
+
 
 # Create DataLoaders
 batch_size = 16
@@ -74,11 +76,13 @@ model = BERTClassifier('bert-base-uncased', num_classes=2)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)
 
+
 # Define the optimizer and scheduler
 num_epochs = 4
 optimizer = AdamW(model.parameters(), lr=2e-5)
 total_steps = len(train_dataloader) * num_epochs
 scheduler = get_linear_schedule_with_warmup(optimizer, num_warmup_steps=0, num_training_steps=total_steps)
+
 
 # Training loop
 for epoch in range(num_epochs):
@@ -107,34 +111,21 @@ for epoch in range(num_epochs):
         predictions.extend(preds.cpu().tolist())
         actual_labels.extend(labels.cpu().tolist())
     accuracy = accuracy_score(actual_labels, predictions)
+    precision, recall, f1, _ = precision_recall_fscore_support(actual_labels, predictions, average='binary')
     report = classification_report(actual_labels, predictions)
     print(f"Validation Accuracy: {accuracy:.4f}")
     print(report)
 
+
 # Save the model
-joblib.dump(model, 'pickle_file/bert_classifier.pkl')
+joblib.dump(model, 'bert_classifier.pkl')
 
 # Save metrics
 metrics = {
     'accuracy': accuracy,
-    'classification_report': report
+    'precision': precision,
+    'recall': recall,
+    'f1_score': f1,
 }
-joblib.dump(metrics, 'pickle_file/metrics_bert_classifier.pkl')
+joblib.dump(metrics, 'metrics_bert_classifier.pkl')
 
-
-# Function to predict the label of a new sentence
-def predict_new_sentence(sentence, model, tokenizer, max_length=128):
-    model.eval()
-    inputs = tokenizer(sentence, max_length=max_length, padding='max_length', truncation=True, return_tensors='pt')
-    input_ids = inputs['input_ids'].to(device)
-    attention_mask = inputs['attention_mask'].to(device)
-    with torch.no_grad():
-        outputs = model(input_ids=input_ids, attention_mask=attention_mask)
-        _, preds = torch.max(outputs, dim=1)
-    return preds.item()
-
-
-# Predict the label of the new sentence
-new_sentence = "Stop acting like a loser. Nobody likes you."
-predicted_label = predict_new_sentence(new_sentence, model, tokenizer)
-print(f"The predicted label for the new sentence is: {predicted_label}")
