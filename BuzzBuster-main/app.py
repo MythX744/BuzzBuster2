@@ -5,22 +5,50 @@ import numpy as np
 import torch
 import re
 import pandas as pd
+from torch import nn
+from transformers import BertModel
 from emoji.core import demojize
 from transformers import AutoTokenizer, AutoModel
 from flask import Flask, request, jsonify, render_template
 
 app = Flask(__name__)
 
+
+class BERTClassifier(nn.Module):
+    def __init__(self, bert_model_name, num_classes):
+        super(BERTClassifier, self).__init__()
+        self.bert = BertModel.from_pretrained(bert_model_name)
+        self.dropout = nn.Dropout(0.1)
+        self.fc = nn.Linear(self.bert.config.hidden_size, num_classes)
+
+    def forward(self, input_ids, attention_mask):
+        outputs = self.bert(input_ids=input_ids, attention_mask=attention_mask)
+        pooled_output = outputs.pooler_output
+        x = self.dropout(pooled_output)
+        logits = self.fc(x)
+        return logits
+
+
 # Load the trained models
 log_reg = joblib.load('pickle_file/logistic_regression.pkl')
 svm_model = joblib.load('pickle_file/svm.pkl')
 neural_network = joblib.load('pickle_file/neural_network.pkl')
 xgboost = joblib.load('pickle_file/xgboost.pkl')
+
 # Load the metrics
 log_reg_metrics = joblib.load('pickle_file/metrics_logistic_regression.pkl')
 svm_metrics = joblib.load('pickle_file/metrics_svm.pkl')
 xgboost_metrics = joblib.load('pickle_file/metrics_xgboost.pkl')
 neural_network_metrics = joblib.load('pickle_file/metrics_neural_network.pkl')
+
+# Load the BERT model and metrics
+model_path = 'pickle_file/bert_classifier_cpu.pkl'
+with open(model_path, 'rb') as f:
+    bert_classifier = pickle.load(f)
+
+metrics_path = 'pickle_file/metrics_bert_classifier_cpu.pkl'
+with open(metrics_path, 'rb') as f:
+    bert_metrics = pickle.load(f)
 
 # Load BERTweet tokenizer and model
 tokenizer = AutoTokenizer.from_pretrained("vinai/bertweet-base")
@@ -111,6 +139,14 @@ def metrics_neural_network():
     return f"{accuracy_nn:.2f}%", f"{f1_nn:.2f}%", f"{recall_nn:.2f}%", f"{precision_nn:.2f}%"
 
 
+def metrics_bert():
+    accuracy_bert = bert_metrics['accuracy'] * 100
+    f1_bert = bert_metrics['f1_score'] * 100
+    recall_bert = bert_metrics['recall'] * 100
+    precision_bert = bert_metrics['precision'] * 100
+    return f"{accuracy_bert:.2f}%", f"{f1_bert:.2f}%", f"{recall_bert:.2f}%", f"{precision_bert:.2f}%"
+
+
 @app.route('/')
 def home():
     # Metrics
@@ -118,14 +154,18 @@ def home():
     accuracy_svm, f1_svm, recall_svm, precision_svm = metrics_svm()
     accuracy_xgboost, f1_xgboost, recall_xgboost, precision_xgboost = metrics_xgboost()
     accuracy_nn, f1_nn, recall_nn, precision_nn = metrics_neural_network()
+    accuracy_bert, f1_bert, recall_bert, precision_bert = metrics_bert()
+    print(f'Predictions: {accuracy_bert, f1_bert, recall_bert, precision_bert}')
 
-    print(f'Logistic Regression Metrics: {accuracy_log, f1_log, recall_log, precision_log}')
     return render_template('home.html',
                            accuracy_log=accuracy_log, f1_log=f1_log, recall_log=recall_log, precision_log=precision_log,
                            accuracy_svm=accuracy_svm, f1_svm=f1_svm, recall_svm=recall_svm, precision_svm=precision_svm,
                            accuracy_xgboost=accuracy_xgboost, f1_xgboost=f1_xgboost, recall_xgboost=recall_xgboost,
-                           precision_xgboost=precision_xgboost, accuracy_nn=accuracy_nn, f1_nn=f1_nn, recall_nn=recall_nn,
-                           precision_nn=precision_nn)
+                           precision_xgboost=precision_xgboost, accuracy_nn=accuracy_nn, f1_nn=f1_nn,
+                           recall_nn=recall_nn,
+                           precision_nn=precision_nn, accuracy_bert=accuracy_bert, f1_bert=f1_bert,
+                           recall_bert=recall_bert,
+                           precision_bert=precision_bert)
 
 
 @app.route('/predict', methods=['POST'])
@@ -140,7 +180,7 @@ def predict():
     # Ensure embeddings have correct shape for prediction
     new_tweet_embeddings = new_tweet_embeddings.reshape(1, -1)
 
-    # Predict using the logistic regression model
+    # Predict using the logistic regression model, SVM, and XGBoost
     prediction_lr = log_reg.predict(new_tweet_embeddings)[0]
     prediction_svm = svm_model.predict(new_tweet_embeddings)[0]
     prediction_xgboost = xgboost.predict(new_tweet_embeddings)[0]
@@ -149,11 +189,26 @@ def predict():
     new_tweet_embeddings_nn = new_tweet_embeddings.reshape(1, new_tweet_embeddings.shape[1], 1)
     prediction_nn = neural_network.predict(new_tweet_embeddings_nn)[0]
 
+    # Predict using the BERT model
+    inputs = tokenizer(processed_new_tweet, return_tensors="pt", truncation=True, padding=True, max_length=128)
+    with torch.no_grad():
+        logits = bert_classifier(inputs['input_ids'], inputs['attention_mask'])
+
+    # Get probabilities and the predicted class
+    probabilities = torch.softmax(logits, dim=1)
+    print(f'Probabilities: {probabilities}')
+    print()
+    max_index = torch.argmax(probabilities, dim=1).item()
+    prediction_bert = probabilities[0][max_index].item()
+    print(f'Predictions: {prediction_lr, prediction_svm, prediction_xgboost, prediction_nn, prediction_bert}')
+    print(f'Index with max value: {max_index}, Max value: {prediction_bert}')
+
     # Metrics
     accuracy_log, f1_log, recall_log, precision_log = logistic_regression_metrics()
     accuracy_svm, f1_svm, recall_svm, precision_svm = metrics_svm()
     accuracy_xgboost, f1_xgboost, recall_xgboost, precision_xgboost = metrics_xgboost()
     accuracy_nn, f1_nn, recall_nn, precision_nn = metrics_neural_network()
+    accuracy_bert, f1_bert, recall_bert, precision_bert = metrics_bert()
 
     # Render the template with the predictions as variables
     return render_template('home.html',
@@ -162,13 +217,14 @@ def predict():
                            prediction_svm=("Bullying detected" if prediction_svm == 1 else "No bullying"),
                            prediction_xgboost=("Bullying detected" if prediction_xgboost == 1 else "No bullying"),
                            prediction_nn=("Bullying detected" if prediction_nn > 0.5 else "No bullying"),
+                           prediction_bert=("Bullying detected" if prediction_bert > 0.5 else "No bullying"),
                            accuracy_log=accuracy_log, f1_log=f1_log, recall_log=recall_log, precision_log=precision_log,
                            accuracy_svm=accuracy_svm, f1_svm=f1_svm, recall_svm=recall_svm, precision_svm=precision_svm,
                            accuracy_xgboost=accuracy_xgboost, f1_xgboost=f1_xgboost, recall_xgboost=recall_xgboost,
                            precision_xgboost=precision_xgboost, accuracy_nn=accuracy_nn, f1_nn=f1_nn,
-                           recall_nn=recall_nn,
-                           precision_nn=precision_nn
-                           )
+                           recall_nn=recall_nn, precision_nn=precision_nn,
+                           accuracy_bert=accuracy_bert, f1_bert=f1_bert, recall_bert=recall_bert,
+                           precision_bert=precision_bert)
 
 
 if __name__ == '__main__':
